@@ -1,4 +1,5 @@
-import { Platform, View } from 'react-native';
+import { Platform, View, StyleSheet } from 'react-native';
+import { Icon } from 'react-native-elements';
 import Constants from 'expo-constants';
 import CampsiteInfoScreen from './CampsiteInfoScreen';
 import DirectoryScreen from './DirectoryScreen';
@@ -22,7 +23,16 @@ const HomeNavigator = () => {
             <Stack.Screen
                 name='Home'
                 component={HomeScreen}
-                options={{ title: 'Home' }}
+                options={({ navigation }) => ({
+                    title: 'Home',
+                    headerLeft: () => (
+                        <Icon
+                            name='home'
+                            type='font-awesome'
+                            iconStyle={StyleSheet.stackIcon}
+                            onPress={() => navigation.toggleDrawer()} />
+                    )
+                })}
             />
         </Stack.Navigator>
     );
@@ -38,7 +48,16 @@ const DirectoryNavigator = () => {
             <Stack.Screen
                 name='Directory'
                 component={DirectoryScreen}
-                options={{ title: 'Campsite Directory' }}
+                options={({ navigation }) => ({
+                    title: 'Campsite Directory',
+                    headerLeft: () => (
+                        <Icon
+                            name='list'
+                            type='font-awesome'
+                            iconStyle={StyleSheet.stackIcon}
+                            onPress={() => navigation.toggleDrawer()} />
+                    )
+                })}
             />
             <Stack.Screen
                 name='CampsiteInfo'
@@ -58,7 +77,16 @@ const ContactNavigator = () => {
             <Stack.Screen
                 name='Contact'
                 component={ContactScreen}
-                options={{ title: 'Contact' }}
+                options={({ navigation }) => ({
+                    title: 'Contact Us',
+                    headerLeft: () => (
+                        <Icon
+                            name='address-card'
+                            type='font-awesome'
+                            iconStyle={StyleSheet.stackIcon}
+                            onPress={() => navigation.toggleDrawer()} />
+                    )
+                })}
             />
         </Stack.Navigator>
     );
@@ -71,7 +99,16 @@ const AboutNavigator = () => {
             <Stack.Screen
                 name='About'
                 component={AboutScreen}
-                options={{ title: 'About' }}
+                options={({ navigation }) => ({
+                    //title: 'Home',
+                    headerLeft: () => (
+                        <Icon
+                            name='info-circle'
+                            type='font-awesome'
+                            iconStyle={StyleSheet.stackIcon}
+                            onPress={() => navigation.toggleDrawer()} />
+                    )
+                })}
             />
         </Stack.Navigator>
     );
@@ -93,12 +130,29 @@ const Main = () => {
                 <Drawer.Screen
                     name='HomeNav'
                     component={HomeNavigator}
-                    options={{ title: 'Home' }}
+                    options={{ 
+                        title: 'Home', 
+                        drawerIcon: ({ color}) => (
+                        <Icon
+                            name='home'
+                            type='font-awesome'
+                            size={24}
+                            iconStyle={{ width: 24}}
+                            color={color}/>
+                        )}}
                 />
                 <Drawer.Screen
                     name='DirectoryNav'
                     component={DirectoryNavigator}
-                    options={{ title: 'Directory' }}
+                    options={{ title: 'Directory',
+                        drawerIcon: ({ color}) => (
+                            <Icon
+                                name='info-circle'
+                                type='font-awesome'
+                                size={24}
+                                iconStyle={{ width: 24}}
+                                color={color}/>
+                            )}}
                 />
                 <Drawer.Screen 
                     name='AboutScreenNav'
@@ -108,10 +162,27 @@ const Main = () => {
                 <Drawer.Screen
                     name='ContactScreenNav'
                     component={ContactNavigator}
-                    options={{title: 'Contact Us'}} />
+                    options={{title: 'Contact Us',
+                        drawerIcon: ({ color}) => (
+                            <Icon
+                                name='address-card'
+                                type='font-awesome'
+                                size={24}
+                                iconStyle={{ width: 24}}
+                                color={color}/>
+                            )}} 
+                />
             </Drawer.Navigator>
         </View>
     );
 };
+
+const styles = StyleSheet.create({
+    stackIcon: {
+        marginLeft: 10,
+        color: '#fff',
+        fontSize: 24
+    }
+})
 
 export default Main;
