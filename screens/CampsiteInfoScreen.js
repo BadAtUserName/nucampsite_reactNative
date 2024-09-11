@@ -108,7 +108,7 @@ const CampsiteInfoScreen = ({ route }) => {
 
                         {/* Input Component for Author */}
                         <Input 
-                            placeHolder="Author"
+                            placeholder="Author"
                             value={author}
                             onChangeText={(text) => setAuthor(text)}
                             leftIcon={{type: 'font-awesome', name:'user-o'}}
@@ -116,7 +116,7 @@ const CampsiteInfoScreen = ({ route }) => {
 
                         {/* Input Component for Comment */}
                         <Input 
-                            placeHolder="Comment"
+                            placeholder="Comment"
                             value={text}
                             onChangeText={(text) => setText(text)} //Handle text input
                             leftIcon={{type: 'font-awesome', name:'comment-o'}}
@@ -139,10 +139,11 @@ const CampsiteInfoScreen = ({ route }) => {
                         <Button 
                         onPress={() => {
                             setShowModal(!showModal);
+                            resetForm();
                             
                         }}
                         color='#808080'
-                        title='Cancel'></Button>
+                        title='Cancel'/>
                     </View>
                 </View>
             </Modal>

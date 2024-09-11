@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { baseUrl } from '../../shared/baseUrl';
-import { toggleFavorite } from '../favorites/favoritesSlice';
+//import { toggleFavorite } from '../favorites/favoritesSlice';
 
 //Fetch Comments Thunk
 export const fetchComments = createAsyncThunk(
@@ -21,7 +21,7 @@ export const fetchComments = createAsyncThunk(
 export const postComment = createAsyncThunk(
     'comments/postComment',
     async (payload, {dispatch, getState}) => {
-        return new Promise((resolve) => {
+        //return new Promise((resolve) => {
             setTimeout(() => {
                 const { comments } = getState();
                 
@@ -33,9 +33,9 @@ export const postComment = createAsyncThunk(
                 dispatch(addComment(payload));
 
                 // Resolve the promise with the payload
-                resolve(payload);
+                //resolve(payload);
             }, 2000);
-        });
+        //});
     }
 );
 
