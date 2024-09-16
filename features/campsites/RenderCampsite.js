@@ -4,20 +4,30 @@ import { Card, Icon } from 'react-native-elements';
 import { baseUrl } from '../../shared/baseUrl';
 import * as Animatable from 'react-native-animatable';
 
-
+//RenderCampsite displays info about the campsite & handles user interaction
 const RenderCampsite = (props) => {
     const { campsite } = props;
+
+    //ref for animatable view
     const view = useRef();
+    //functions to detect swipes
     const isLeftSwipe = ({dx}) => dx < -200;
+    const isRightSwipe = ({dx}) => dx > 200;
+
+    //panResponder config
     const panResponder = PanResponder.create({
         onStartShouldSetPanResponder: () => true,
+        //triggered when user touches, trigs animation 
         onPanResponderGrant: () => {
             view.current.rubberBand(1000)
             .then((endState) => console.log(endState.finished ? 'finished' : 'canceled'))
         },
+        //triggered when stops touch
         onPanResponderEnd: (e, gestureState) => {
-            console.log({gestureState})
+            console.log({gestureState}) //debug gesture state
+            //checks if left swipe
             if (isLeftSwipe(gestureState)) {
+                //Displays alert if user swipes left
                 Alert.alert(
                     'Add Favorite',
                     'Are you sure you wish to add' +
@@ -39,10 +49,13 @@ const RenderCampsite = (props) => {
                         ], 
                         { cancelable: false}
                 );
+                //checks if right swipe
+            } else if (isRightSwipe(gestureState)) {
+                props.onShowModal();
             }
         }
 });
-
+    //If campsite provided, render campsite info
     if (campsite) {
         return (
             <Animatable.View
@@ -95,9 +108,11 @@ const RenderCampsite = (props) => {
             </Animatable.View>
         );
     }
+    //no campsite return an empty view
     return <View />;
 };
 
+//component styles
 const styles = StyleSheet.create({
     cardContainer: {
         padding: 0,

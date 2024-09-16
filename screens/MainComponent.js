@@ -99,13 +99,14 @@ const ContactNavigator = () => {
     );
 };
 
+//resy stack navigator
 const ReservationNavigator = () => {
     const Stack = createStackNavigator();
     return (
         <Stack.Navigator screenOptions={screenOptions}>
             <Stack.Screen
                 name='Reservation'
-                component={ContactScreen}
+                component={ReservationScreen}
                 options={({ navigation }) => ({
                     title: 'Reservation Search',
                     headerLeft: () => (
@@ -122,6 +123,7 @@ const ReservationNavigator = () => {
     );
 };
 
+//fave stack navigator
 const FavoritesNavigator = () => {
     const Stack = createStackNavigator();
     return (

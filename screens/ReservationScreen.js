@@ -7,31 +7,54 @@ import {
     Switch,
     Button,
     Platform,
-    Modal
+    Alert
+    //Modal
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import * as Animatable from 'react-native-animatable';
 
+//ResScreen component handles user inputs and resy
 const ReservationScreen = () => {
+    //states to store user input info
     const [campers, setCampers] = useState(1);
     const [hikeIn, setHikeIn] = useState(false);
     const [date, setDate] = useState(new Date());
     const [showCalendar, setShowCalendar] = useState(false);
-    const [showModal, setShowModal] = useState(false);
+    //const [showModal, setShowModal] = useState(false);
 
+    //handler for date changes
     const onDateChange = (event, selectedDate) => {
         const currentDate = selectedDate || date;
         setShowCalendar(Platform.OS === 'ios');
         setDate(currentDate);
     };
-
+    //Funct handles resy submission
     const handleReservation = () => {
         console.log('campers:', campers);
         console.log('hikeIn:', hikeIn);
         console.log('date:', date);
-        setShowModal(!showModal);
+        //setShowModal(!showModal);
+
+        //Display alert to confirm resy
+        Alert.alert(
+            "BeginSearch?",
+            `Number of Campers: ${campers}
+            \nHike-In: ${hikeIn ? 'Yes' : 'No'}
+            \nDate: ${date.toLocaleDateString('en-US')}`,
+            [
+                {text: "Cancel", 
+                onPress: () => resetForm(), 
+                style: "cancel"},
+
+                {text: "Ok", 
+                onPress: () => resetForm()}   
+            ],
+            {cancelable: false}
+        );
     };
 
+    //Functions to reset the form to initial state
     const resetForm = () => {
         setCampers(1);
         setHikeIn(false);
@@ -41,13 +64,18 @@ const ReservationScreen = () => {
 
     return (
         <ScrollView>
+            {/* Animating the View using zoomIn animation */}
+            <Animatable.View animation="zoomIn" duration={2000} delay={1000}>
+
+            {/* Number of Campers picker */}
             <View style={styles.formRow}>
                 <Text style={styles.formLabel}>Number of Campers:</Text>
                 <Picker
                     style={styles.formItem}
                     selectedValue={campers}
-                    onValueChange={(itemValue) => setCampers(itemValue)}
+                    onValueChange={(itemValue) => setCampers(itemValue)} //updates number of campers
                 >
+                    {/* Dropdown options for the number of campers */}
                     <Picker.Item label='1' value={1} />
                     <Picker.Item label='2' value={2} />
                     <Picker.Item label='3' value={3} />
@@ -56,15 +84,19 @@ const ReservationScreen = () => {
                     <Picker.Item label='6' value={6} />
                 </Picker>
             </View>
+
+            {/* Hike-In option switch */}
             <View style={styles.formRow}>
                 <Text style={styles.formLabel}>Hike In?</Text>
                 <Switch
                     style={styles.formItem}
                     value={hikeIn}
                     trackColor={{ true: '#5637DD', false: null }}
-                    onValueChange={(value) => setHikeIn(value)}
+                    onValueChange={(value) => setHikeIn(value)} //toggles hike in value
                 />
             </View>
+
+            {/* Date selection button */}
             <View style={styles.formRow}>
                 <Text style={styles.formLabel}>Date:</Text>
                 <Button
@@ -74,6 +106,7 @@ const ReservationScreen = () => {
                     accessibilityLabel='Tap me to select a reservation date'
                 />
             </View>
+            {/* Date picker (shown if showCalendar is true) */}
             {showCalendar && (
                 <DateTimePicker
                     style={styles.formItem}
@@ -83,6 +116,7 @@ const ReservationScreen = () => {
                     onChange={onDateChange}
                 />
             )}
+            {/* Campsite avail button */}
             <View style={styles.formRow}>
                 <Button
                     onPress={() => handleReservation()}
@@ -91,39 +125,13 @@ const ReservationScreen = () => {
                     accessibilityLabel='Tap me to search for available campsites to reserve'
                 />
             </View>
-            <Modal
-                animationType='slide'
-                transparent={false}
-                visible={showModal}
-                onRequestClose={() => setShowModal(!showModal)}
-            >
-                <View style={styles.modal}>
-                    <Text style={styles.modalTitle}>
-                        Search Campsite Reservations
-                    </Text>
-                    <Text style={styles.modalText}>
-                        Number of Campers: {campers}
-                    </Text>
-                    <Text style={styles.modalText}>
-                        Hike-In?: {hikeIn ? 'Yes' : 'No'}
-                    </Text>
-                    <Text style={styles.modalText}>
-                        Date: {date.toLocaleDateString('en-US')}
-                    </Text>
-                    <Button
-                        onPress={() => {
-                            setShowModal(!showModal);
-                            resetForm();
-                        }}
-                        color='#5637DD'
-                        title='Close'
-                    />
-                </View>
-            </Modal>
+            </Animatable.View>
         </ScrollView>
     );
+    
 };
 
+//StyleSheet
 const styles = StyleSheet.create({
     formRow: {
         alignItems: 'center',
