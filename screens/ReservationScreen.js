@@ -13,6 +13,7 @@ import {
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as Animatable from 'react-native-animatable';
+import * as Notifications from 'expo-notifications';
 
 //ResScreen component handles user inputs and resy
 const ReservationScreen = () => {
@@ -48,10 +49,19 @@ const ReservationScreen = () => {
                 style: "cancel"},
 
                 {text: "Ok", 
-                onPress: () => resetForm()}   
+                onPress: () => {
+                    presentLocalNotification(
+                        date.toLocaleDateString('en-US')
+                    );
+                    resetForm();
+                }
+                }
             ],
-            {cancelable: false}
+            { cancelable: false }
         );
+        console.log('campers:', campers);
+        console.log('hikeIn:', hikeIn);
+        console.log('date:', date);
     };
 
     //Functions to reset the form to initial state
@@ -61,6 +71,32 @@ const ReservationScreen = () => {
         setDate(new Date());
         setShowCalendar(false);
     };
+
+    const presentLocalNotification = async (reservationDate) => {
+        const sendNotification = () => {
+            Notifications.setNotificationHandler({
+                handleNotification: async () => ({
+                    shouldShowAlert: true,
+                    shouldPlaySound: true, 
+                    shouldSetBadge: true
+                })
+            })
+            Notifications.scheduleNotificationAsyncI({
+                content: {
+                    title: 'Your campsite reservation search', 
+                    body: `Search for ${reservationDate} requested`
+                },
+                trigger: null
+            });
+        }
+        let permissions = await Notifications.getPermissionsAsync();
+        if (!permissions.granted) {
+            sendNotification();
+        }
+        if (permissions.granted) {
+            sendNotification();
+        }
+    }
 
     return (
         <ScrollView>
