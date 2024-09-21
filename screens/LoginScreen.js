@@ -5,7 +5,8 @@ import * as SecureStore from 'expo-secure-store';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import * as ImagePicker from 'expo-image-picker';
 import { baseUrl } from '../shared/baseUrl';
-import logo from '../assets/images/logo.png'
+import logo from '../assets/images/logo.png';
+import * as ImageManipulator from 'expo-image-manipulator';
 
 const LoginTab = ({ navigation }) => {
     const [username, setUsername] = useState('');
@@ -104,13 +105,13 @@ const LoginTab = ({ navigation }) => {
 };
 
 const RegisterTab = () => {
-    const [imageUrl, setImageUrl] = useState(baseurl + 'images/logo.png')
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [remember, setRemember] = useState(false);
+    const [imageUrl, setImageUrl] = useState(baseUrl + 'images/logo.png');
 
     const handleRegister = () => {
         const userInfo = {
@@ -137,9 +138,63 @@ const RegisterTab = () => {
         }
     };
 
+    const getImageFromCamera = async () => {
+        const cameraPermission =
+            await ImagePicker.requestCameraPermissionsAsync();
+
+        if (cameraPermission.status === 'granted') {
+            const capturedImage = await ImagePicker.launchCameraAsync({
+                allowsEditing: true,
+                aspect: [1, 1]
+            });
+            if (capturedImage.assets) {
+                console.log(capturedImage.assets[0]);
+                // Call processImage with the URI of the captured image
+                await processImage(capturedImage.assets[0].uri);
+            }
+        }
+    };
+
+    const processImage = async (imgUri) => {
+      
+      const processedImage = await ImageManipulator.manipulateAsync(
+        imgUri,
+        [{resize: {width:300}}],
+        {compress: 1, format: ImageManipulator.SaveFormat.PNG}
+      );
+      console.log(processedImage)
+      setImageUrl(processedImage.uri)
+    }
+
+    const getImageFromGallery = async () => {
+      const mediaLibraryPermissions = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+      if (mediaLibraryPermissions.status === 'granted') {
+          const capturedImage = await ImagePicker.launchImageLibraryAsync({
+              allowsEditing: true,
+              aspect: [1, 1]
+          });
+          if (capturedImage.assets) {
+              console.log('Captured Image Details:', capturedImage.assets[0]);
+              // Call processImage with the URI of the captured image
+              await processImage(capturedImage.assets[0].uri);
+          }
+      }
+    }
+
     return (
         <ScrollView>
             <View style={styles.container}>
+                <View style={styles.imageContainer}>
+                    <Image
+                        source={{ uri: imageUrl }}
+                        loadingIndicatorSource={logo}
+                        style={styles.image}
+                    />
+                    {/* Camera button*/}
+                    <Button title='Camera' onPress={getImageFromCamera} />
+                    <Button title='Gallery' onPress={getImageFromGallery}/>
+                </View>
                 <Input
                     placeholder='Username'
                     leftIcon={{ type: 'font-awesome', name: 'user-o' }}
@@ -203,35 +258,10 @@ const RegisterTab = () => {
                         buttonStyle={{ backgroundColor: '#5637DD' }}
                     />
                 </View>
-                <View>
-                  <Image
-                    source={{uri: imageUrl }}
-                    loadingIndicatorSource={logo}
-                    style={styles} 
-                  />
-                  <Button
-                    title='Camera'
-                    onPress={getImageFromCamera} 
-                  />
-                </View>
             </View>
         </ScrollView>
     );
 };
-
-const getImageFromCamera = async () => {
-  const cameraPermission =  await ImagePicker.requestCameraPermissionsAsync();
-  if (cameraPermission.status === 'granted') {
-    const capturedImage = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      aspect: [1, 1]
-    })
-    if (capturedImage.assets) {
-      console.log(capturedImage.assets[0]);
-      setImageUrl(capturedImage.assets[0].uri)
-    }
-  }
-}
 
 const Tab = createBottomTabNavigator();
 
@@ -300,17 +330,17 @@ const styles = StyleSheet.create({
         margin: 20,
         marginRight: 40,
         marginLeft: 40
-    }, 
+    },
     imageContainer: {
-      flex: 1, 
-      flexDirection: 'row', 
-      alignItems: 'center',
-      justifyContent: 'space-evenly',
-      margin: 10
-    }, 
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-evenly',
+        margin: 10
+    },
     image: {
-      width: 60, 
-      height: 60
+        width: 60,
+        height: 60
     }
 });
 
